@@ -1,0 +1,9 @@
+server:
+  port: ":3000"
+  workers:
+    - "localhost:9090"
+    - "localhost:9091"
+
+worker:
+  port: ":9090"
+  name: "worker-node-1"

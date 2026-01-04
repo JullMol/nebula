@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net"
@@ -13,15 +14,18 @@ import (
 )
 
 func main() {
-	fmt.Println("⚡ Nebula Worker Node Starting...")
+	portPtr := flag.String("port", "9090", "Port untuk Worker")
+	flag.Parse()
+
+	port := fmt.Sprintf(":%s", *portPtr)
+
+	fmt.Printf("⚡ Nebula Worker Node Starting on Port %s...\n", port)
 
 	dockerCli, err := docker.NewClient()
 	if err != nil {
 		log.Fatalf("❌ Gagal konek Docker: %v", err)
 	}
-	fmt.Println("✅ Docker Connected")
-
-	port := ":9090"
+	
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("❌ Gagal listen port %s: %v", port, err)
@@ -31,7 +35,7 @@ func main() {
 	workerServer := worker.NewServer(dockerCli)
 	pb.RegisterWorkerServiceServer(grpcServer, workerServer)
 
-	fmt.Printf("🚀 Worker siap menerima perintah di port %s...\n", port)
+	fmt.Printf("🚀 Worker siap di %s\n", port)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("❌ Gagal serve gRPC: %v", err)
