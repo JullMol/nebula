@@ -1,0 +1,10 @@
+server:
+  port: ":3000"
+  workers:
+    - "worker-1:9090"
+    - "worker-2:9090"
+  redis_addr: "redis:6379"
+
+worker:
+  port: ":9090"
+  name: "worker-node"

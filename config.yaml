@@ -3,6 +3,7 @@ server:
   workers:
     - "localhost:9090"
     - "localhost:9091"
+  redis_addr: "localhost:6379"
 
 worker:
   port: ":9090"

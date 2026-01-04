@@ -68,6 +68,7 @@ func (c *Client) GetLogs(ctx context.Context, containerID string) (string, error
 	out, err := c.cli.ContainerLogs(ctx, containerID, container.LogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
+		Follow: true,
 	})
 	if err != nil {
 		return "", err

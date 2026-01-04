@@ -12,6 +12,7 @@ type Config struct {
 type ServerConfig struct {
 	Port    string   `mapstructure:"port"`
 	Workers []string `mapstructure:"workers"`
+	RedisAddr string `mapstructure:"redis_addr"`
 }
 
 type WorkerConfig struct {

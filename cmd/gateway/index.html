@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌌 Nebula Control Panel</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; max-width: 800px; margin: 40px auto; padding: 20px; }
+        .card { background: #1e293b; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); margin-bottom: 20px; }
+        h1 { color: #38bdf8; text-align: center; margin-bottom: 30px; }
+        input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: none; box-sizing: border-box; }
+        input { background: #334155; color: white; border: 1px solid #475569; }
+        button { background: #38bdf8; color: #0f172a; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #0ea5e9; }
+        #log-area { background: #000; color: #00ff00; font-family: 'Courier New', monospace; padding: 15px; border-radius: 6px; min-height: 100px; white-space: pre-wrap; display: none; }
+        .status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8em; font-weight: bold; }
+        .pending { background: #f59e0b; color: black; }
+        .completed { background: #10b981; color: black; }
+    </style>
+</head>
+<body>
+    <h1>🌌 Nebula FaaS Platform</h1>
+    
+    <div class="card">
+        <h3>🚀 Submit New Task</h3>
+        <input type="text" id="image" placeholder="Docker Image (e.g. alpine, python:3.9-slim)" value="alpine">
+        <input type="text" id="cmd" placeholder="Command (e.g. echo hello)" value="sleep 3 && echo Hello from Nebula Dashboard!">
+        <button onclick="submitJob()">Deploy Function</button>
+    </div>
+
+    <div class="card" id="result-card" style="display:none">
+        <h3>📡 Live Status: <span id="status-badge" class="status pending">QUEUED</span></h3>
+        <p>Job ID: <span id="job-id" style="color: #94a3b8">...</span></p>
+        <div id="log-area">Loading output...</div>
+    </div>
+
+    <script>
+        async function submitJob() {
+            const image = document.getElementById('image').value;
+            const cmd = document.getElementById('cmd').value;
+            const resultCard = document.getElementById('result-card');
+            const logArea = document.getElementById('log-area');
+            const statusBadge = document.getElementById('status-badge');
+            
+            const res = await fetch('/submit', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ image, command: cmd })
+            });
+            const data = await res.json();
+            
+            resultCard.style.display = 'block';
+            document.getElementById('job-id').innerText = data.job_id;
+            statusBadge.innerText = 'PROCESSING...';
+            statusBadge.className = 'status pending';
+            logArea.style.display = 'block';
+            logArea.innerText = 'Waiting for worker...';
+
+            const interval = setInterval(async () => {
+                const check = await fetch('/status/' + data.job_id);
+                const statusData = await check.json();
+
+                if (statusData.status === 'completed') {
+                    clearInterval(interval);
+                    statusBadge.innerText = 'COMPLETED';
+                    statusBadge.className = 'status completed';
+                    logArea.innerText = statusData.output || '(No Output)';
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
