@@ -4,17 +4,15 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"strings"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/client"
-)
 
-type DockerClient interface {
-	RunContainer(ctx context.Context, image string, cmd []string, env []string) (string, error)
-	StopContainer(ctx context.Context, containerID string) error
-	GetLogs(ctx context.Context, containerID string) (string, error)
-}
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/image"
+	"github.com/docker/docker/client"
+	"github.com/google/uuid"
+)
 
 type Client struct {
 	cli *client.Client
@@ -23,59 +21,99 @@ type Client struct {
 func NewClient() (*Client, error) {
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		return nil, fmt.Errorf("failed to create docker client: %w", err)
+		return nil, err
 	}
 	return &Client{cli: cli}, nil
 }
 
-func (c *Client) RunContainer(ctx context.Context, image string, cmd []string, env []string) (string, error) {
-	reader, err := c.cli.ImagePull(ctx, image, types.ImagePullOptions{})
+func (c *Client) RunContainer(ctx context.Context, imageName string, command string, code string) (string, error) {
+	reader, err := c.cli.ImagePull(ctx, imageName, image.PullOptions{})
 	if err != nil {
-		return "", fmt.Errorf("failed to pull image %s: %w", image, err)
+		return "", fmt.Errorf("gagal pull image: %w", err)
 	}
 	io.Copy(io.Discard, reader)
 	reader.Close()
 
-	resp, err := c.cli.ContainerCreate(ctx, &container.Config{
-		Image: image,
-		Cmd: cmd,
-		Env: env,
-		Tty: false,
-	}, nil, nil, nil, "")
+	var hostConfig *container.HostConfig
+	if code != "" {
+		cwd, _ := os.Getwd()
+		tempDir := filepath.Join(cwd, "temp_jobs", uuid.New().String())
+		if err := os.MkdirAll(tempDir, 0755); err != nil {
+			return "", fmt.Errorf("gagal bikin folder temp: %w", err)
+		}
+
+		fileName := "main.txt"
+		runCommand := ""
+
+		if strings.Contains(imageName, "python") {
+			fileName = "main.py"
+			runCommand = "python -u"
+		} else if strings.Contains(imageName, "node") {
+			fileName = "main.js"
+			runCommand = "node"
+		}
+
+		filePath := filepath.Join(tempDir, fileName)
+		if err := os.WriteFile(filePath, []byte(code), 0644); err != nil {
+			return "", fmt.Errorf("gagal tulis file: %w", err)
+		}
+
+		fmt.Printf("📂 Script (%s) dibuat di Host: %s\n", fileName, filePath)
+
+		hostConfig = &container.HostConfig{
+			Binds: []string{
+				fmt.Sprintf("%s:/app", tempDir),
+			},
+		}
+
+		if command == "" {
+			command = fmt.Sprintf("%s /app/%s", runCommand, fileName)
+		}
+	}
+	resp, err := c.cli.ContainerCreate(ctx, 
+		&container.Config{
+			Image: imageName,
+			Cmd:   []string{"sh", "-c", command},
+			Tty:   false,
+		}, 
+		hostConfig,
+		nil, nil, "",
+	)
 	if err != nil {
-		return "", fmt.Errorf("failed to create container: %w", err)
+		return "", fmt.Errorf("gagal create container: %w", err)
 	}
 
 	if err := c.cli.ContainerStart(ctx, resp.ID, container.StartOptions{}); err != nil {
-		return "", fmt.Errorf("failed to start container: %w", err)
+		return "", fmt.Errorf("gagal start container: %w", err)
 	}
+
 	return resp.ID, nil
 }
 
 func (c *Client) StopContainer(ctx context.Context, containerID string) error {
-	timeout := 5
-	stopOptions := container.StopOptions{
-		Timeout: &timeout,
+	return c.cli.ContainerStop(ctx, containerID, container.StopOptions{})
+}
+
+func (c *Client) WaitContainer(ctx context.Context, containerID string) error {
+	statusCh, errCh := c.cli.ContainerWait(ctx, containerID, container.WaitConditionNotRunning)
+	select {
+	case err := <-errCh:
+		return err
+	case <-statusCh:
+		return nil
 	}
-	
-	if err := c.cli.ContainerStop(ctx, containerID, stopOptions); err != nil {
-		return fmt.Errorf("failed to stop container %s: %w", containerID, err)
-	}
-	return nil
 }
 
 func (c *Client) GetLogs(ctx context.Context, containerID string) (string, error) {
-	out, err := c.cli.ContainerLogs(ctx, containerID, container.LogsOptions{
-		ShowStdout: true,
-		ShowStderr: true,
-		Follow: true,
-	})
+	out, err := c.cli.ContainerLogs(ctx, containerID, container.LogsOptions{ShowStdout: true, ShowStderr: true})
 	if err != nil {
 		return "", err
 	}
 	defer out.Close()
 
-	buf := new(strings.Builder)
-	_, err = io.Copy(buf, out)
-	return buf.String(), err
+	logs, err := io.ReadAll(out)
+	if err != nil {
+		return "", err
+	}
+	return string(logs), nil
 }

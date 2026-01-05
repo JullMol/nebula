@@ -1,8 +1,8 @@
 server:
   port: ":3000"
   workers:
-    - "localhost:9090"
     - "localhost:9091"
+    - "localhost:9092"
   redis_addr: "localhost:6379"
 
 worker:

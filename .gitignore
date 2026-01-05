@@ -1,3 +1,4 @@
+# Binaries
 *.exe
 *.exe~
 *.dll
@@ -5,6 +6,23 @@
 *.dylib
 *.test
 *.out
+
+# IDE
 vendor/
 .vscode/
 .idea/
+
+# Temporary files
+temp_jobs/
+
+# Environment
+.env
+.env.local
+*.log
+
+# Docker volumes
+postgres_data/
+
+# OS files
+.DS_Store
+Thumbs.db

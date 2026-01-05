@@ -3,73 +3,54 @@ package worker
 import (
 	"context"
 	"fmt"
+
 	pb "github.com/JullMol/nebula/api/pb"
 	"github.com/JullMol/nebula/internal/platform/docker"
 )
 
 type Server struct {
 	pb.UnimplementedWorkerServiceServer
-	dockerClient *docker.Client
+	dockerClient *docker.Client 
 }
 
-func NewServer(dockerCli *docker.Client) *Server {
-	return &Server{
-		dockerClient: dockerCli,
-	}
+func NewServer(dockerClient *docker.Client) *Server {
+	return &Server{dockerClient: dockerClient}
 }
 
 func (s *Server) StartContainer(ctx context.Context, req *pb.StartContainerRequest) (*pb.StartContainerResponse, error) {
-	fmt.Printf("🔔 Request Masuk: Start Container image=%s cmd=%s\n", req.Image, req.Command)
+	fmt.Printf("🚀 Request Masuk: Image=%s | CodeLength=%d\n", req.Image, len(req.Code))
 
-	cmd := []string{req.Command} 
-    if req.Command == "" {
-        cmd = []string{"echo", "Hello from gRPC!"}
-    } else {
-        cmd = []string{"sh", "-c", req.Command}
-    }
-
-	containerID, err := s.dockerClient.RunContainer(ctx, req.Image, cmd, nil)
+	containerID, err := s.dockerClient.RunContainer(ctx, req.Image, req.Command, req.Code)
+	
 	if err != nil {
-		fmt.Printf("❌ Gagal start: %v\n", err)
-		return &pb.StartContainerResponse{
-			Success:      false,
-			ErrorMessage: err.Error(),
-		}, nil
+		return nil, err
 	}
 
-	fmt.Printf("✅ Sukses! ID: %s\n", containerID)
-
 	return &pb.StartContainerResponse{
-		Success:     true,
 		ContainerId: containerID,
 	}, nil
 }
 
 func (s *Server) StopContainer(ctx context.Context, req *pb.StopContainerRequest) (*pb.StopContainerResponse, error) {
-	fmt.Printf("🔔 Request Masuk: Stop Container ID=%s\n", req.ContainerId)
-
 	err := s.dockerClient.StopContainer(ctx, req.ContainerId)
 	if err != nil {
-		return &pb.StopContainerResponse{
-			Success:      false,
-			ErrorMessage: err.Error(),
-		}, nil
+		return &pb.StopContainerResponse{Success: false}, err
 	}
+	return &pb.StopContainerResponse{Success: true}, nil
+}
 
-	return &pb.StopContainerResponse{
-		Success: true,
-	}, nil
+func (s *Server) WaitContainer(ctx context.Context, req *pb.WaitContainerRequest) (*pb.WaitContainerResponse, error) {
+	err := s.dockerClient.WaitContainer(ctx, req.ContainerId)
+	if err != nil {
+		return &pb.WaitContainerResponse{Success: false}, err
+	}
+	return &pb.WaitContainerResponse{Success: true}, nil
 }
 
 func (s *Server) GetLogs(ctx context.Context, req *pb.GetLogsRequest) (*pb.GetLogsResponse, error) {
 	logs, err := s.dockerClient.GetLogs(ctx, req.ContainerId)
 	if err != nil {
-		return &pb.GetLogsResponse{
-			ErrorMessage: err.Error(),
-		}, nil
+		return nil, err
 	}
-
-	return &pb.GetLogsResponse{
-		Logs: logs,
-	}, nil
+	return &pb.GetLogsResponse{Logs: logs}, nil
 }

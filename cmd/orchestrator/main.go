@@ -26,7 +26,7 @@ func main() {
 	fmt.Printf("✅ Terhubung ke Worker di %s\n", target)
 
 	fmt.Println("📤 Mengirim perintah StartContainer...")
-	
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -39,5 +39,5 @@ func main() {
 		log.Fatalf("❌ Gagal memanggil RPC: %v", err)
 	}
 
-	fmt.Printf("✅ Worker merespon: Sukses=%v, ContainerID=%s\n", resp.Success, resp.ContainerId)
+	fmt.Printf("✅ Worker merespon: ContainerID=%s\n", resp.ContainerId)
 }

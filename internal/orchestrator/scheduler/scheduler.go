@@ -1,9 +1,10 @@
 package scheduler
 
-import (
-	"sync/atomic"
-)
+import "sync/atomic"
 
+type LoadBalancer interface {
+	NextWorker(workers []string) string
+}
 type RoundRobin struct {
 	counter uint64
 }

@@ -10,9 +10,10 @@ import (
 )
 
 type Job struct {
-	ID     string `json:"id"`
-	Image  string `json:"image"`
+	ID      string `json:"id"`
+	Image   string `json:"image"`
 	Command string `json:"command"`
+	Code    string `json:"code"`
 }
 
 type QueueSystem interface {

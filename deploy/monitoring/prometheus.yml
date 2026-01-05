@@ -3,5 +3,6 @@ global:
 
 scrape_configs:
   - job_name: 'nebula-gateway'
+    metrics_path: '/metrics'
     static_configs:
-      - targets: ['gateway:3001']
+      - targets: ['host.docker.internal:3001']

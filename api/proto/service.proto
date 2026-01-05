@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/JullMol/nebula/api/pb";
+
+service WorkerService {
+  rpc StartContainer (StartContainerRequest) returns (StartContainerResponse);
+  rpc StopContainer (StopContainerRequest) returns (StopContainerResponse);
+  rpc WaitContainer (WaitContainerRequest) returns (WaitContainerResponse);
+  rpc GetLogs (GetLogsRequest) returns (GetLogsResponse);
+}
+
+message WaitContainerRequest {
+  string container_id = 1;
+}
+
+message WaitContainerResponse {
+  bool success = 1;
+}
+
+message StartContainerRequest {
+  string image = 1;
+  string command = 2;
+  string code = 3;
+}
+
+message StartContainerResponse {
+  string container_id = 1;
+}
+
+message StopContainerRequest {
+  string container_id = 1;
+}
+
+message StopContainerResponse {
+  bool success = 1;
+}
+
+message GetLogsRequest {
+  string container_id = 1;
+}
+
+message GetLogsResponse {
+  string logs = 1;
+}

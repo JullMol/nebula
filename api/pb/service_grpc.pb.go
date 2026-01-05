@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.0
 // - protoc             v6.33.2
-// source: api/proto/worker.proto
+// source: api/proto/service.proto
 
 package pb
 
@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	WorkerService_StartContainer_FullMethodName = "/worker.WorkerService/StartContainer"
-	WorkerService_StopContainer_FullMethodName  = "/worker.WorkerService/StopContainer"
-	WorkerService_GetLogs_FullMethodName        = "/worker.WorkerService/GetLogs"
+	WorkerService_StartContainer_FullMethodName = "/pb.WorkerService/StartContainer"
+	WorkerService_StopContainer_FullMethodName  = "/pb.WorkerService/StopContainer"
+	WorkerService_WaitContainer_FullMethodName  = "/pb.WorkerService/WaitContainer"
+	WorkerService_GetLogs_FullMethodName        = "/pb.WorkerService/GetLogs"
 )
 
 // WorkerServiceClient is the client API for WorkerService service.
@@ -30,6 +31,7 @@ const (
 type WorkerServiceClient interface {
 	StartContainer(ctx context.Context, in *StartContainerRequest, opts ...grpc.CallOption) (*StartContainerResponse, error)
 	StopContainer(ctx context.Context, in *StopContainerRequest, opts ...grpc.CallOption) (*StopContainerResponse, error)
+	WaitContainer(ctx context.Context, in *WaitContainerRequest, opts ...grpc.CallOption) (*WaitContainerResponse, error)
 	GetLogs(ctx context.Context, in *GetLogsRequest, opts ...grpc.CallOption) (*GetLogsResponse, error)
 }
 
@@ -61,6 +63,16 @@ func (c *workerServiceClient) StopContainer(ctx context.Context, in *StopContain
 	return out, nil
 }
 
+func (c *workerServiceClient) WaitContainer(ctx context.Context, in *WaitContainerRequest, opts ...grpc.CallOption) (*WaitContainerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WaitContainerResponse)
+	err := c.cc.Invoke(ctx, WorkerService_WaitContainer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *workerServiceClient) GetLogs(ctx context.Context, in *GetLogsRequest, opts ...grpc.CallOption) (*GetLogsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetLogsResponse)
@@ -77,6 +89,7 @@ func (c *workerServiceClient) GetLogs(ctx context.Context, in *GetLogsRequest, o
 type WorkerServiceServer interface {
 	StartContainer(context.Context, *StartContainerRequest) (*StartContainerResponse, error)
 	StopContainer(context.Context, *StopContainerRequest) (*StopContainerResponse, error)
+	WaitContainer(context.Context, *WaitContainerRequest) (*WaitContainerResponse, error)
 	GetLogs(context.Context, *GetLogsRequest) (*GetLogsResponse, error)
 	mustEmbedUnimplementedWorkerServiceServer()
 }
@@ -93,6 +106,9 @@ func (UnimplementedWorkerServiceServer) StartContainer(context.Context, *StartCo
 }
 func (UnimplementedWorkerServiceServer) StopContainer(context.Context, *StopContainerRequest) (*StopContainerResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method StopContainer not implemented")
+}
+func (UnimplementedWorkerServiceServer) WaitContainer(context.Context, *WaitContainerRequest) (*WaitContainerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method WaitContainer not implemented")
 }
 func (UnimplementedWorkerServiceServer) GetLogs(context.Context, *GetLogsRequest) (*GetLogsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetLogs not implemented")
@@ -154,6 +170,24 @@ func _WorkerService_StopContainer_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkerService_WaitContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WaitContainerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkerServiceServer).WaitContainer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkerService_WaitContainer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkerServiceServer).WaitContainer(ctx, req.(*WaitContainerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WorkerService_GetLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetLogsRequest)
 	if err := dec(in); err != nil {
@@ -176,7 +210,7 @@ func _WorkerService_GetLogs_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var WorkerService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "worker.WorkerService",
+	ServiceName: "pb.WorkerService",
 	HandlerType: (*WorkerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -188,10 +222,14 @@ var WorkerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _WorkerService_StopContainer_Handler,
 		},
 		{
+			MethodName: "WaitContainer",
+			Handler:    _WorkerService_WaitContainer_Handler,
+		},
+		{
 			MethodName: "GetLogs",
 			Handler:    _WorkerService_GetLogs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/proto/worker.proto",
+	Metadata: "api/proto/service.proto",
 }

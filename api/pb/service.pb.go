@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.2
-// source: api/proto/worker.proto
+// source: api/proto/service.proto
 
 package pb
 
@@ -21,17 +21,106 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type WaitContainerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ContainerId   string                 `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WaitContainerRequest) Reset() {
+	*x = WaitContainerRequest{}
+	mi := &file_api_proto_service_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WaitContainerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WaitContainerRequest) ProtoMessage() {}
+
+func (x *WaitContainerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_service_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WaitContainerRequest.ProtoReflect.Descriptor instead.
+func (*WaitContainerRequest) Descriptor() ([]byte, []int) {
+	return file_api_proto_service_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *WaitContainerRequest) GetContainerId() string {
+	if x != nil {
+		return x.ContainerId
+	}
+	return ""
+}
+
+type WaitContainerResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WaitContainerResponse) Reset() {
+	*x = WaitContainerResponse{}
+	mi := &file_api_proto_service_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WaitContainerResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WaitContainerResponse) ProtoMessage() {}
+
+func (x *WaitContainerResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_service_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WaitContainerResponse.ProtoReflect.Descriptor instead.
+func (*WaitContainerResponse) Descriptor() ([]byte, []int) {
+	return file_api_proto_service_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *WaitContainerResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 type StartContainerRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Image         string                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
 	Command       string                 `protobuf:"bytes,2,opt,name=command,proto3" json:"command,omitempty"`
+	Code          string                 `protobuf:"bytes,3,opt,name=code,proto3" json:"code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StartContainerRequest) Reset() {
 	*x = StartContainerRequest{}
-	mi := &file_api_proto_worker_proto_msgTypes[0]
+	mi := &file_api_proto_service_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +132,7 @@ func (x *StartContainerRequest) String() string {
 func (*StartContainerRequest) ProtoMessage() {}
 
 func (x *StartContainerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_worker_proto_msgTypes[0]
+	mi := &file_api_proto_service_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +145,7 @@ func (x *StartContainerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartContainerRequest.ProtoReflect.Descriptor instead.
 func (*StartContainerRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_worker_proto_rawDescGZIP(), []int{0}
+	return file_api_proto_service_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *StartContainerRequest) GetImage() string {
@@ -73,18 +162,23 @@ func (x *StartContainerRequest) GetCommand() string {
 	return ""
 }
 
+func (x *StartContainerRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
 type StartContainerResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	ContainerId   string                 `protobuf:"bytes,2,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
-	ErrorMessage  string                 `protobuf:"bytes,3,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	ContainerId   string                 `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StartContainerResponse) Reset() {
 	*x = StartContainerResponse{}
-	mi := &file_api_proto_worker_proto_msgTypes[1]
+	mi := &file_api_proto_service_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -96,7 +190,7 @@ func (x *StartContainerResponse) String() string {
 func (*StartContainerResponse) ProtoMessage() {}
 
 func (x *StartContainerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_worker_proto_msgTypes[1]
+	mi := &file_api_proto_service_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -109,26 +203,12 @@ func (x *StartContainerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartContainerResponse.ProtoReflect.Descriptor instead.
 func (*StartContainerResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_worker_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *StartContainerResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
+	return file_api_proto_service_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *StartContainerResponse) GetContainerId() string {
 	if x != nil {
 		return x.ContainerId
-	}
-	return ""
-}
-
-func (x *StartContainerResponse) GetErrorMessage() string {
-	if x != nil {
-		return x.ErrorMessage
 	}
 	return ""
 }
@@ -142,7 +222,7 @@ type StopContainerRequest struct {
 
 func (x *StopContainerRequest) Reset() {
 	*x = StopContainerRequest{}
-	mi := &file_api_proto_worker_proto_msgTypes[2]
+	mi := &file_api_proto_service_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -154,7 +234,7 @@ func (x *StopContainerRequest) String() string {
 func (*StopContainerRequest) ProtoMessage() {}
 
 func (x *StopContainerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_worker_proto_msgTypes[2]
+	mi := &file_api_proto_service_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -167,7 +247,7 @@ func (x *StopContainerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopContainerRequest.ProtoReflect.Descriptor instead.
 func (*StopContainerRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_worker_proto_rawDescGZIP(), []int{2}
+	return file_api_proto_service_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *StopContainerRequest) GetContainerId() string {
@@ -180,14 +260,13 @@ func (x *StopContainerRequest) GetContainerId() string {
 type StopContainerResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	ErrorMessage  string                 `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StopContainerResponse) Reset() {
 	*x = StopContainerResponse{}
-	mi := &file_api_proto_worker_proto_msgTypes[3]
+	mi := &file_api_proto_service_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -199,7 +278,7 @@ func (x *StopContainerResponse) String() string {
 func (*StopContainerResponse) ProtoMessage() {}
 
 func (x *StopContainerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_worker_proto_msgTypes[3]
+	mi := &file_api_proto_service_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -212,7 +291,7 @@ func (x *StopContainerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopContainerResponse.ProtoReflect.Descriptor instead.
 func (*StopContainerResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_worker_proto_rawDescGZIP(), []int{3}
+	return file_api_proto_service_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *StopContainerResponse) GetSuccess() bool {
@@ -220,13 +299,6 @@ func (x *StopContainerResponse) GetSuccess() bool {
 		return x.Success
 	}
 	return false
-}
-
-func (x *StopContainerResponse) GetErrorMessage() string {
-	if x != nil {
-		return x.ErrorMessage
-	}
-	return ""
 }
 
 type GetLogsRequest struct {
@@ -238,7 +310,7 @@ type GetLogsRequest struct {
 
 func (x *GetLogsRequest) Reset() {
 	*x = GetLogsRequest{}
-	mi := &file_api_proto_worker_proto_msgTypes[4]
+	mi := &file_api_proto_service_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -250,7 +322,7 @@ func (x *GetLogsRequest) String() string {
 func (*GetLogsRequest) ProtoMessage() {}
 
 func (x *GetLogsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_worker_proto_msgTypes[4]
+	mi := &file_api_proto_service_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -263,7 +335,7 @@ func (x *GetLogsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLogsRequest.ProtoReflect.Descriptor instead.
 func (*GetLogsRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_worker_proto_rawDescGZIP(), []int{4}
+	return file_api_proto_service_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetLogsRequest) GetContainerId() string {
@@ -276,14 +348,13 @@ func (x *GetLogsRequest) GetContainerId() string {
 type GetLogsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Logs          string                 `protobuf:"bytes,1,opt,name=logs,proto3" json:"logs,omitempty"`
-	ErrorMessage  string                 `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetLogsResponse) Reset() {
 	*x = GetLogsResponse{}
-	mi := &file_api_proto_worker_proto_msgTypes[5]
+	mi := &file_api_proto_service_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -295,7 +366,7 @@ func (x *GetLogsResponse) String() string {
 func (*GetLogsResponse) ProtoMessage() {}
 
 func (x *GetLogsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_worker_proto_msgTypes[5]
+	mi := &file_api_proto_service_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -308,7 +379,7 @@ func (x *GetLogsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLogsResponse.ProtoReflect.Descriptor instead.
 func (*GetLogsResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_worker_proto_rawDescGZIP(), []int{5}
+	return file_api_proto_service_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetLogsResponse) GetLogs() string {
@@ -318,95 +389,94 @@ func (x *GetLogsResponse) GetLogs() string {
 	return ""
 }
 
-func (x *GetLogsResponse) GetErrorMessage() string {
-	if x != nil {
-		return x.ErrorMessage
-	}
-	return ""
-}
+var File_api_proto_service_proto protoreflect.FileDescriptor
 
-var File_api_proto_worker_proto protoreflect.FileDescriptor
-
-const file_api_proto_worker_proto_rawDesc = "" +
+const file_api_proto_service_proto_rawDesc = "" +
 	"\n" +
-	"\x16api/proto/worker.proto\x12\x06worker\"G\n" +
+	"\x17api/proto/service.proto\x12\x02pb\"9\n" +
+	"\x14WaitContainerRequest\x12!\n" +
+	"\fcontainer_id\x18\x01 \x01(\tR\vcontainerId\"1\n" +
+	"\x15WaitContainerResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"[\n" +
 	"\x15StartContainerRequest\x12\x14\n" +
 	"\x05image\x18\x01 \x01(\tR\x05image\x12\x18\n" +
-	"\acommand\x18\x02 \x01(\tR\acommand\"z\n" +
-	"\x16StartContainerResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\x12!\n" +
-	"\fcontainer_id\x18\x02 \x01(\tR\vcontainerId\x12#\n" +
-	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"9\n" +
+	"\acommand\x18\x02 \x01(\tR\acommand\x12\x12\n" +
+	"\x04code\x18\x03 \x01(\tR\x04code\";\n" +
+	"\x16StartContainerResponse\x12!\n" +
+	"\fcontainer_id\x18\x01 \x01(\tR\vcontainerId\"9\n" +
 	"\x14StopContainerRequest\x12!\n" +
-	"\fcontainer_id\x18\x01 \x01(\tR\vcontainerId\"V\n" +
+	"\fcontainer_id\x18\x01 \x01(\tR\vcontainerId\"1\n" +
 	"\x15StopContainerResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"3\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"3\n" +
 	"\x0eGetLogsRequest\x12!\n" +
-	"\fcontainer_id\x18\x01 \x01(\tR\vcontainerId\"J\n" +
+	"\fcontainer_id\x18\x01 \x01(\tR\vcontainerId\"%\n" +
 	"\x0fGetLogsResponse\x12\x12\n" +
-	"\x04logs\x18\x01 \x01(\tR\x04logs\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage2\xea\x01\n" +
-	"\rWorkerService\x12O\n" +
-	"\x0eStartContainer\x12\x1d.worker.StartContainerRequest\x1a\x1e.worker.StartContainerResponse\x12L\n" +
-	"\rStopContainer\x12\x1c.worker.StopContainerRequest\x1a\x1d.worker.StopContainerResponse\x12:\n" +
-	"\aGetLogs\x12\x16.worker.GetLogsRequest\x1a\x17.worker.GetLogsResponseB\"Z github.com/JullMol/nebula/api/pbb\x06proto3"
+	"\x04logs\x18\x01 \x01(\tR\x04logs2\x98\x02\n" +
+	"\rWorkerService\x12G\n" +
+	"\x0eStartContainer\x12\x19.pb.StartContainerRequest\x1a\x1a.pb.StartContainerResponse\x12D\n" +
+	"\rStopContainer\x12\x18.pb.StopContainerRequest\x1a\x19.pb.StopContainerResponse\x12D\n" +
+	"\rWaitContainer\x12\x18.pb.WaitContainerRequest\x1a\x19.pb.WaitContainerResponse\x122\n" +
+	"\aGetLogs\x12\x12.pb.GetLogsRequest\x1a\x13.pb.GetLogsResponseB\"Z github.com/JullMol/nebula/api/pbb\x06proto3"
 
 var (
-	file_api_proto_worker_proto_rawDescOnce sync.Once
-	file_api_proto_worker_proto_rawDescData []byte
+	file_api_proto_service_proto_rawDescOnce sync.Once
+	file_api_proto_service_proto_rawDescData []byte
 )
 
-func file_api_proto_worker_proto_rawDescGZIP() []byte {
-	file_api_proto_worker_proto_rawDescOnce.Do(func() {
-		file_api_proto_worker_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_api_proto_worker_proto_rawDesc), len(file_api_proto_worker_proto_rawDesc)))
+func file_api_proto_service_proto_rawDescGZIP() []byte {
+	file_api_proto_service_proto_rawDescOnce.Do(func() {
+		file_api_proto_service_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_api_proto_service_proto_rawDesc), len(file_api_proto_service_proto_rawDesc)))
 	})
-	return file_api_proto_worker_proto_rawDescData
+	return file_api_proto_service_proto_rawDescData
 }
 
-var file_api_proto_worker_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
-var file_api_proto_worker_proto_goTypes = []any{
-	(*StartContainerRequest)(nil),  // 0: worker.StartContainerRequest
-	(*StartContainerResponse)(nil), // 1: worker.StartContainerResponse
-	(*StopContainerRequest)(nil),   // 2: worker.StopContainerRequest
-	(*StopContainerResponse)(nil),  // 3: worker.StopContainerResponse
-	(*GetLogsRequest)(nil),         // 4: worker.GetLogsRequest
-	(*GetLogsResponse)(nil),        // 5: worker.GetLogsResponse
+var file_api_proto_service_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_api_proto_service_proto_goTypes = []any{
+	(*WaitContainerRequest)(nil),   // 0: pb.WaitContainerRequest
+	(*WaitContainerResponse)(nil),  // 1: pb.WaitContainerResponse
+	(*StartContainerRequest)(nil),  // 2: pb.StartContainerRequest
+	(*StartContainerResponse)(nil), // 3: pb.StartContainerResponse
+	(*StopContainerRequest)(nil),   // 4: pb.StopContainerRequest
+	(*StopContainerResponse)(nil),  // 5: pb.StopContainerResponse
+	(*GetLogsRequest)(nil),         // 6: pb.GetLogsRequest
+	(*GetLogsResponse)(nil),        // 7: pb.GetLogsResponse
 }
-var file_api_proto_worker_proto_depIdxs = []int32{
-	0, // 0: worker.WorkerService.StartContainer:input_type -> worker.StartContainerRequest
-	2, // 1: worker.WorkerService.StopContainer:input_type -> worker.StopContainerRequest
-	4, // 2: worker.WorkerService.GetLogs:input_type -> worker.GetLogsRequest
-	1, // 3: worker.WorkerService.StartContainer:output_type -> worker.StartContainerResponse
-	3, // 4: worker.WorkerService.StopContainer:output_type -> worker.StopContainerResponse
-	5, // 5: worker.WorkerService.GetLogs:output_type -> worker.GetLogsResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+var file_api_proto_service_proto_depIdxs = []int32{
+	2, // 0: pb.WorkerService.StartContainer:input_type -> pb.StartContainerRequest
+	4, // 1: pb.WorkerService.StopContainer:input_type -> pb.StopContainerRequest
+	0, // 2: pb.WorkerService.WaitContainer:input_type -> pb.WaitContainerRequest
+	6, // 3: pb.WorkerService.GetLogs:input_type -> pb.GetLogsRequest
+	3, // 4: pb.WorkerService.StartContainer:output_type -> pb.StartContainerResponse
+	5, // 5: pb.WorkerService.StopContainer:output_type -> pb.StopContainerResponse
+	1, // 6: pb.WorkerService.WaitContainer:output_type -> pb.WaitContainerResponse
+	7, // 7: pb.WorkerService.GetLogs:output_type -> pb.GetLogsResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_api_proto_worker_proto_init() }
-func file_api_proto_worker_proto_init() {
-	if File_api_proto_worker_proto != nil {
+func init() { file_api_proto_service_proto_init() }
+func file_api_proto_service_proto_init() {
+	if File_api_proto_service_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_proto_worker_proto_rawDesc), len(file_api_proto_worker_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_proto_service_proto_rawDesc), len(file_api_proto_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_api_proto_worker_proto_goTypes,
-		DependencyIndexes: file_api_proto_worker_proto_depIdxs,
-		MessageInfos:      file_api_proto_worker_proto_msgTypes,
+		GoTypes:           file_api_proto_service_proto_goTypes,
+		DependencyIndexes: file_api_proto_service_proto_depIdxs,
+		MessageInfos:      file_api_proto_service_proto_msgTypes,
 	}.Build()
-	File_api_proto_worker_proto = out.File
-	file_api_proto_worker_proto_goTypes = nil
-	file_api_proto_worker_proto_depIdxs = nil
+	File_api_proto_service_proto = out.File
+	file_api_proto_service_proto_goTypes = nil
+	file_api_proto_service_proto_depIdxs = nil
 }
